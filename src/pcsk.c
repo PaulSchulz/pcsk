@@ -24,7 +24,7 @@
 #define UNDEF		INT_MAX
 #define DUMMY_STRING	"dummy string"
 
-#define PCSK_VERSION	"0.0.5"
+#define PCSK_VERSION	"0.0.6"
 #define PCSK_REVISION	"0"
 
 /* a log line can be this long - will be wrapped if longer */
@@ -1588,7 +1588,7 @@ void usage(void)
 	printf("\t%s -r|-s [-eoq] [-p pidfile] [-l logfile] [-c count] [-w wait]\n", program_invocation_short_name);
 	printf("\t [-i increment] [-m minruntime] [-g giveupcmdline] [[-R] -d dir]\n");
 	printf("\t [-u username] [-U username] [-0] [-F flagfile] program [[--] args]\n\n");
-	printf("\t%s -a [-eoq] [-p pidfile] [-l logfile] [-w wait] [[-R] -d dir]\n");
+	printf("\t%s -a [-eoq] [-p pidfile] [-l logfile] [-w wait] [[-R] -d dir]\n", program_invocation_short_name);
 	printf("\t [-u username] [-U username] [-0] [-F flagfile] program [[--] args]\n\n");
 	printf("Daemonises (and optionally supervises) a script or program that cannot\n");
 	printf("daemonise, or supervises a program that can, but cannot supervise itself.\n\n");
