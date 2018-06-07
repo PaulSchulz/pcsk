@@ -24,7 +24,7 @@
 #define UNDEF		INT_MAX
 #define DUMMY_STRING	"dummy string"
 
-#define PCSK_VERSION	"0.0.3"
+#define PCSK_VERSION	"0.0.4"
 #define PCSK_REVISION	"0"
 
 /* a log line can be this long - will be wrapped if longer */
@@ -614,10 +614,10 @@ void pcsk(void)
 				logit("The file given with '-F' (\"%s\") is not a regular file.\n", finish_if_this_file_exists);
 				exit(EXIT_FAILURE);
 			}
-		}
-		if (unlink(finish_if_this_file_exists)) {
-			logit("Cannot delete file \"%s\": %s\n", finish_if_this_file_exists, strerror(errno));
-			exit(EXIT_FAILURE);
+			if (unlink(finish_if_this_file_exists)) {
+				logit("Cannot delete file \"%s\": %s\n", finish_if_this_file_exists, strerror(errno));
+				exit(EXIT_FAILURE);
+			}
 		}
 	}
 
@@ -1006,7 +1006,7 @@ void spawn_child(void)
 		if (ch_root) {
 			/* now we have to regain privileges */
 			change_persona_back(oldpersona);
-			if (chdir(dir) || chroot(dir) || chdir("/")) {	/* the first chdir is a security measure */
+			if (chroot(dir) || chdir("/")) {
 				logit("Cannot chroot to \"%s\": %s\n", dir, strerror(errno));
 				logit("Won't exec() the program.");
 				exit(EXIT_FAILURE);
