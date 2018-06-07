@@ -1,0 +1,27 @@
+Things needed to be done:
+
+IMPORTANT:
+
+* fix possible memory leaks
+	- I know of none, it seems to be OK
+
+* GNU-style long options
+	- I can live without them, but not everybody
+
+* man page
+	- VERY important
+
+* alternate logging style: do not close()/open() the logfile at every line,
+  but instead accept a signal spec on the commandline, and reopen the
+  logfile when that signal arrives (and do not deliver that signal to the
+  child)
+  	- if the program generates much output, the current practice is
+	  not economical
+
+
+EXTRAS:
+
+* interface to achieve start-stop-daemon -like functionality
+  (SIGKILL is still problematic) - a socket or sg like that
+
+* environment cleanup (see start-stop-daemon, run, supervise)

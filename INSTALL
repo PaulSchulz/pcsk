@@ -1,0 +1,21 @@
+The compilation and installing is straightforward:
+
+  1. `cd' to the directory containing the package's source code
+
+  2. Type 'make' to compile the package.
+
+  3. Type 'make install' to install the program and other stuff.
+
+
+Compilers
+=========
+
+Works with GCC 2.95.4. Perhaps with many others, no black magic involved. :-)
+
+
+Installation Paths
+==================
+
+By default, installs the files under '/usr/local/bin', '/usr/local/man', etc.
+You can override it with giving the DESTDIR=<somepath> for make, eg.:
+make install DESTDIR=/opt/pcsk/

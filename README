@@ -1,0 +1,50 @@
+PCSK is a program that
+
+* daemonises (cleanly), and then forks a program (which so does not need to
+  do the dirty work itself)
+
+* spawns a (non-daemonising) program, waits and re-spawns it if terminated
+  (guarantees that it always runs), or
+
+* runs a program at least every n seconds, but as often as possible
+  ('anti-cron')
+
+* can do a chroot before running a program
+
+* can change uid/gid before running a program
+
+* logs (with timestamp) the program starting/termination events, and optionally
+  the program's stdout and/or stderr in a file
+
+
+PCSK is written in C.
+
+
+See the FEATURES file included in the sources, and the home page (below).
+
+
+Systems
+~~~~~~~
+
+The program exensively takes use of GNU libc, and some not-so-common
+I/O interfaces. It was written for a GNU/Linux system. No other ports
+exist (yet?). Help is welcome, if you think that it should be ported. ;-)
+
+
+Homepage
+~~~~~~~~
+
+http://www.nix.hu/projects/pcsk
+
+
+Download
+~~~~~~~~
+
+http://www.nix.hu/downloads/pcsk/
+
+
+Author
+~~~~~~
+Author: Norbert Buchmuller <norbi@nix.hu>
+
+Comments and bug reports are welcome.

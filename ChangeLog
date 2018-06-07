@@ -1,0 +1,161 @@
+2004-07-14		Norbert Buchmuller <norbi@nix.hu>
+	* pcsk.c: changed the socket pairs from datagram syle communication to stream style communication (what a fool I was..:-)
+
+2004-07-10		Norbert Buchmuller <norbi@nix.hu>
+	* pcsk.c: fixed a bug with va_list (caused compilation error under gcc-3)
+
+2004-07-09		Norbert Buchmuller <norbi@nix.hu>
+	* *: renamed the program from runit to pcsk
+	* *: swapped trunk and the 0.1 development branch (from now the development will always be on trunk, and stable releases are branches)
+
+
+2004-05-12		Norbert Buchmuller <norbi@nix.hu>
+
+	* pcsk.c: fixed a bug in persona (privilege) change code (now privilege change works)
+	* pcsk.c: fixed a bug that made using option -U fail
+	* pcsk.c: fixed a bug that caused segfault when using -u option
+	* pcsk.c: increased the amount of memory allocated before calling getgrouplist() (a bug exists in Debian stable's libc6 package; which causes segfault if it is less than the groups returned by getgrouplist)
+
+
+2004-04-23		Norbert Buchmuller <norbi@nix.hu>
+
+	* pcsk.c: better handling of getgrouplist() (the old method worked, but was marginal)
+
+
+2004-04-16		Norbert Buchmuller <norbi@nix.hu>
+
+	* pcsk.c: updated version number in pcsk.c to 2.6pre11
+	* pcsk.c: revision number increased
+
+2004-03-07		Norbert Buchmuller <norbi@nix.hu>
+
+	* pcsk.c: added copyright/warranty notice (reference to GPL)
+
+
+2004-02-14		Norbert Buchmuller <norbi@nix.hu>
+
+	* pcsk.c: fixed the bug causing an infinite loop (the bug was
+	  introduced by the previous change)
+	* pcsk.c: fixed a bug that caused hanging the interactive shell on
+	  exit that started pcsk (now redirects stdin/stdout/stderr to
+	  /dev/null early)
+	* pcsk.c: fixed a bug that caused a wrong pid appear in the
+	  "Spawning ... (pid = x)" message
+	* pcsk.c: fixed a bug that made the kill_grace stuff not to work
+	* pcsk.c: removed a surplus chdir("/")
+	* pcsk.c: new feature (option '-0'): don't respawn if the exit status
+	  was 0 (true)
+	* pcsk.c: new feature (option '-F'): don't respawn if the named file
+	  exists (and unlinks the file on startup)
+	* pcsk.c: minor changes in output format strings
+	* pcsk.c: fixed a bug that caused pcsk to segfault when the pidfile
+	  does not exist
+	* pcsk.c: does not (erroneously) allow relative names in paths
+	  (dir, logfile, pidfile, program)
+	* pcsk.c: chdir to the root before checking any pidfiles, executables,
+	  etc.
+	* pcsk.c: different logit() format string before got daemonised
+
+
+2003-09-13		Norbert Buchmuller <norbi@nix.hu>
+
+	* pcsk.c: fixed a bug that might cause an infinite recursion when
+	  the logfile was not a regular file
+	* pcsk.c: now the child waits for the parent to log the spwaning
+	  attempt (sock_sync)
+	* pcsk.c: code cleanups
+
+
+2003-07-27		Norbert Buchmuller <norbi@nix.hu>
+
+	* pcsk.c: bugfixes, the previous version was seriously buggy
+	* pcsk.c: one process again! (via sigsuspend(), can do IO and
+	  wait()ing simulteaneously, without active waiting)
+
+
+2003-07-25		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: bugfix in logging (collect_output())
+
+
+2003-07-15		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: fixed a bug in collect_input() (that corrupted logging
+	  if the output came in small chunks)
+
+
+2003-07-08		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: can change uid/gid if needed
+	* pcsk.c: logit() can be used everywhere (fprintf(stderr, ...)
+	  is replaced)
+
+
+2003-06-08		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: change_persona() introduced
+	* pcsk.c: fixed a bug that might cause an infinite recursion when
+	  the logfile was not a regular file
+
+
+2003-05-25		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: setting ps info in logger process works
+	* pcsk.c: minor changes
+	* pcsk.c: chroot capability
+
+
+2003-03-12		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: logging rewritten (forks into a separate logger process)
+
+
+2003-02-02		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: new operating mode (anticron), new concept: operating mode
+	* pcsk.c: quiet logging option
+	* pcsk.c: rewritten option parser (two phases), checks for
+	  incompatible options
+	* pcsk.c: pidfile deletion placed in the right place: cleanup code
+	  ('twas a bug)
+	* pcsk.c: minor code rearrangement (split up in functions)
+
+
+2002-12-31		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: check for a running pcsk process with the same pidfile
+	* pcsk.c: remove pidfile after exiting
+	* pcsk.c: -c0 option (never give up)
+	* pcsk.c: checks for failed memory allocations
+	* pcsk.c: corrected an error in child waiting (could be stuck in
+	  select() if SIGCHLD arrives while not in select())
+	* pcsk.c: restructured code (split up in separate functions)
+
+
+2002-12-29		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: added copyright notice :-)
+	* pcsk.c: first (presumably) working version: collecting stderr/stdout
+	  while waiting for the child to terminate (using SIGCHLD and select())
+	* pcsk.c: experimental version (DOES NOT WORK!), with separate logger
+	  child process
+
+
+2002-09-01		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: fixes in open()..
+	* pcsk.c: minor change in catch_signal()
+	* pcsk.c: using only SIGTRAP for rotating logs
+	* pcsk.c: good logfile handling: reopen logfile on each
+	  non-terminating caught signal (HUP, USR1, USR2, WINCH, PWR)
+	* pcsk.c: Changed logfile behaviour: re-opens logfile on every log
+	  line (Rotating logs was not possible before.)
+	* pcsk.c: added -v option (version info)
+	* pcsk.c: added only the usage printout.. :-)
+
+
+2002-08-29		Norbert Buchmuller <norbertb@freemail.hu>
+
+	* pcsk.c: works..
+	* pcsk.c: logging and default filename handling rewritten
+	* pcsk.c: initial revision
