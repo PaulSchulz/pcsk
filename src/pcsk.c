@@ -1217,7 +1217,7 @@ pid_t wait_child(int *status)
 {
 	pid_t term_pid;
 
-	if ((term_pid = waitpid(WAIT_ANY, status, WNOHANG)) < 0) {
+	if ((term_pid = waitpid(-1, status, WNOHANG)) < 0) {
 		/* error: log and continue */
 		logit("Error in waitpid(): %s", strerror(errno));
 		logit("Sleeping for %d seconds, and going on...", error_delay);
