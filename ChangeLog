@@ -1,3 +1,7 @@
+2004-08-28		Norbert Buchmuller <norbi@nix.hu>
+	* pcsk.c: a security hole fixed (could chroot into an otherwise inaccessible directory)
+	* pcsk.c: fixed a bug that caused blocking (infinite sleep) after too much respawns
+
 2004-07-14		Norbert Buchmuller <norbi@nix.hu>
 	* pcsk.c: changed the socket pairs from datagram syle communication to stream style communication (what a fool I was..:-)
 

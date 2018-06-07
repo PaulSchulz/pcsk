@@ -22,8 +22,9 @@
 #define TRUE		1
 #define FALSE		0
 #define UNDEF		INT_MAX
+#define DUMMY_STRING	"dummy string"
 
-#define PCSK_VERSION	"0.0.2"
+#define PCSK_VERSION	"0.0.3"
 #define PCSK_REVISION	"0"
 
 /* a log line can be this long - will be wrapped if longer */
@@ -790,7 +791,7 @@ void pcsk_daemon(void)
 				logit("Spawning \"%s\" (pid = %d).", cmdline, pid);
 
 			/* let the child run */
-			write(sock_sync[1], "let's go", strlen("let's go"));
+			write(sock_sync[1], DUMMY_STRING, strlen(DUMMY_STRING));
 
 			/* remember that we have a child */
 			haschild = TRUE;
@@ -974,7 +975,7 @@ int manage_delay(int *delay_now, int *counter, int last, int runtime)
 /* spawn the child */
 void spawn_child(void)
 {
-	fd_set fd_sync;
+	char buf[strlen(DUMMY_STRING)];	/* buffer for the dummy data */
 
 	/* reset signal handlers to default */
 	reset_sigactions();
@@ -1005,7 +1006,7 @@ void spawn_child(void)
 		if (ch_root) {
 			/* now we have to regain privileges */
 			change_persona_back(oldpersona);
-			if (chroot(dir) || chdir("/")) {
+			if (chdir(dir) || chroot(dir) || chdir("/")) {	/* the first chdir is a security measure */
 				logit("Cannot chroot to \"%s\": %s\n", dir, strerror(errno));
 				logit("Won't exec() the program.");
 				exit(EXIT_FAILURE);
@@ -1047,9 +1048,7 @@ void spawn_child(void)
 	/* wait until the parent is ready
 	 * so that entries in the logfile be
 	 * in logical order */
-	FD_ZERO(&fd_sync);
-	FD_SET(sock_sync[0], &fd_sync);
-	select(FD_SETSIZE, &fd_sync, NULL, NULL, NULL);
+	read(sock_sync[0], buf, sizeof(buf));
 	close(sock_sync[0]);
 
 	/* exec the program (or die) */
