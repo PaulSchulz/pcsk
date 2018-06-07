@@ -24,7 +24,7 @@
 #define UNDEF		INT_MAX
 #define DUMMY_STRING	"dummy string"
 
-#define PCSK_VERSION	"0.0.4"
+#define PCSK_VERSION	"0.0.5"
 #define PCSK_REVISION	"0"
 
 /* a log line can be this long - will be wrapped if longer */
@@ -997,6 +997,9 @@ void spawn_child(void)
 	/* close the wrong end of the 'synchroniser' socket */
 	close(sock_sync[1]);
 
+	/* regain privileges */
+	change_persona_back(oldpersona);
+
 	/*
 	 * some buggy software needs the conffiles in the current
 	 * working directory, these need an option to change the dir;
@@ -1004,15 +1007,11 @@ void spawn_child(void)
 	 */
 	if (dir) {
 		if (ch_root) {
-			/* now we have to regain privileges */
-			change_persona_back(oldpersona);
 			if (chroot(dir) || chdir("/")) {
 				logit("Cannot chroot to \"%s\": %s\n", dir, strerror(errno));
 				logit("Won't exec() the program.");
 				exit(EXIT_FAILURE);
 			}
-			/* now relinquish privileges again */
-			change_persona_into(usepersona);
 		} else if (chdir(dir)) {
 			logit("Cannot chdir to \"%s\": %s", dir, strerror(errno));
 			logit("Won't exec() the program.");
@@ -1022,8 +1021,6 @@ void spawn_child(void)
 
 	/* change uid if needed */
 	if (!progpersona.empty) {
-		/* we have to regain privileges */
-		change_persona_back(oldpersona);
 		/* then change persona permanently */
 		if (setgid(progpersona.gid)) {
 			logit("Cannot change gid to %d: %s", progpersona.gid, strerror(errno));
@@ -1312,6 +1309,11 @@ void check_for_termination(void)
 /* check if the process is already runnig */
 int already_running(void)
 {
+	int ret = FALSE;
+
+	/* now we have to regain privileges */
+	change_persona_back(oldpersona);
+
 	if ((pidfile = fopen(pidfilename, "r")) > 0) {
 		char *pidstr;
 		size_t len;
@@ -1337,12 +1339,15 @@ int already_running(void)
 		if (!stat(proc_exe, &proc_sb)) {
 			/* compare the device and inode numbers */
 			if (pcsk_sb.st_dev == proc_sb.st_dev && pcsk_sb.st_ino == proc_sb.st_ino) {
-				return TRUE;
+				ret = TRUE;
 			}
 		}
 	}
 
-	return FALSE;
+	/* now relinquish privileges again */
+	change_persona_into(usepersona);
+
+	return ret;
 }
 
 /* ------------------------------------------------------------------- */
