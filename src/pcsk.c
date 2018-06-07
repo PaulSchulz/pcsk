@@ -18,6 +18,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <sys/socket.h>
+#include <sys/resource.h>
 
 #define TRUE		1
 #define FALSE		0
@@ -196,6 +197,13 @@ int main(int argc, char *argv[], char *env[])
 	int opt_w = UNDEF;
 	int c;
 	int i;
+	struct rlimit rl;
+
+	getrlimit(RLIMIT_NOFILE, &rl);
+	if (rl.rlim_max == RLIM_INFINITY)
+		rl.rlim_max = 1024;
+	for (i = STDERR_FILENO + 1; i < rl.rlim_max; i++)
+		(void) close(i);
 
 	/* copy default values */
 	logstderr = default_logstderr;
