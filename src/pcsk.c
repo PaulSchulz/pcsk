@@ -842,6 +842,7 @@ void pcsk_daemon(void)
 
 	/* log that we have finished */
 	logit("Exiting.");
+	cleanup();
 
 	/* close log sockets */
 	if (logstdout) {
