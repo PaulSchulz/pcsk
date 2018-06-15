@@ -1387,7 +1387,7 @@ void logit(const char *first, ...)
 	/* how to log it depends on whether we are daemonised */
 	if (!daemonised) {
 		/* write to stderr */
-		fprintf(stderr, line);
+	        fprintf(stderr, "%s", line);
 	} else {
 		/* append to the file */
 		writelog(line);
