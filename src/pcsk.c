@@ -26,7 +26,7 @@
 #define DUMMY_STRING	"dummy string"
 
 #define PCSK_VERSION	"0.0.6"
-#define PCSK_REVISION	"0"
+#define PCSK_REVISION	"pre0"
 
 /* a log line can be this long - will be wrapped if longer */
 #define LOGLINE_MAX	256
@@ -113,7 +113,7 @@ void spawn_child(void);
 void parse_exitcode(int status, int runtime);
 void wait_and_process_io(int *status);
 pid_t wait_child(int *status);
-void collect_output(int file, char *buf, size_t buflen, char **ptr);
+int collect_output(int file, char *buf, size_t buflen, char **ptr);
 void check_for_termination(void);
 int already_running(void);
 void logit(const char *first, ...);
@@ -1126,6 +1126,7 @@ void wait_and_process_io(int *status)
 	char *ptr_stderr = buf_stderr;
 	char *ptr_stdout = buf_stdout;
 	sigset_t mask, oldmask;
+	int got_err, got_out;
 
 	/* stuff needed by select */
 	FD_ZERO(&fd_all);
@@ -1192,15 +1193,24 @@ void wait_and_process_io(int *status)
 			do {
 				fd_got = fd_all;
 				if ((ready = select(FD_SETSIZE, &fd_got, NULL, NULL, &zerotime)) > 0) {
-					got_any = TRUE;
 					if (logstderr && FD_ISSET(child_stderr, &fd_got)) {
-						collect_output(child_stderr, buf_stderr, LOGLINE_MAX, &ptr_stderr);
+					       got_err = collect_output(child_stderr, buf_stderr, LOGLINE_MAX, &ptr_stderr);
+					} else {
+					       got_err = 0;
 					}
 					if (logstdout && FD_ISSET(child_stdout, &fd_got)) {
-						collect_output(child_stdout, buf_stdout, LOGLINE_MAX, &ptr_stdout);
+						got_out = collect_output(child_stdout, buf_stdout, LOGLINE_MAX, &ptr_stdout);
+					} else {
+					       got_out = 0;
+					}
+
+					if (got_err != 0 || got_out != 0) {
+					       got_any = TRUE;
+					} else {
+					       got_any = FALSE;
 					}
 				}
-			} while (ready > 0);
+			} while (ready > 0 && got_any);
 			if (!got_any && !haschild)
 				break;	/* no input was possible & child dead */
 		}
@@ -1241,7 +1251,7 @@ pid_t wait_child(int *status)
 /* read line(s) from the file descriptor, writelog() each line.
  * a line is: chars until \n, or at most LOGLINE_MAX chars
  */
-void collect_output(int file, char *buf, size_t buflen, char **ptr)
+int collect_output(int file, char *buf, size_t buflen, char **ptr)
 {
 	size_t chars_read;
 	char *end = buf + buflen;
@@ -1251,6 +1261,9 @@ void collect_output(int file, char *buf, size_t buflen, char **ptr)
 	/* read until end of buffer */
 	chars_read = read(file, *ptr, end - *ptr);
 	last = *ptr + chars_read;
+
+	if (chars_read = 0)
+	  return chars_read;
 
 	/* split up at newlines and write to logfile */
 	for (*ptr = buf; (*ptr < last) && (eol = memchr(*ptr, '\n', last - *ptr)); *ptr = eol + 1) {
@@ -1280,6 +1293,8 @@ void collect_output(int file, char *buf, size_t buflen, char **ptr)
 	} else {
 		*ptr = buf;
 	}
+
+	return chars_read;
 }
 
 /* ------------------------------------------------------------------- */
