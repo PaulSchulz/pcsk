@@ -1195,11 +1195,21 @@ void wait_and_process_io(int *status)
 				if ((ready = select(FD_SETSIZE, &fd_got, NULL, NULL, &zerotime)) > 0) {
 					if (logstderr && FD_ISSET(child_stderr, &fd_got)) {
 					       got_err = collect_output(child_stderr, buf_stderr, LOGLINE_MAX, &ptr_stderr);
+					       /* handle case where child closes file - zero bytes read*/
+					       if (got_err = 0) {
+						 logstderr = FALSE;
+						 close(child_stderr);
+					       }
 					} else {
 					       got_err = 0;
 					}
 					if (logstdout && FD_ISSET(child_stdout, &fd_got)) {
 						got_out = collect_output(child_stdout, buf_stdout, LOGLINE_MAX, &ptr_stdout);
+					       /* handle case where child closes file - zero bytes read*/
+					       if (got_out = 0) {
+						 logstdout = FALSE;
+						 close(child_stdout);
+					       }
 					} else {
 					       got_out = 0;
 					}
