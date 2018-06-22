@@ -28,8 +28,9 @@
 #define PCSK_VERSION	"0.0.6"
 #define PCSK_REVISION	"pre0"
 
-/* a log line can be this long - will be wrapped if longer */
-#define LOGLINE_MAX	256
+/* A log line can be this long - will be wrapped if longer.
+   Two bytes are added for processing. */
+#define LOGLINE_MAX	510
 
 /* allocate memory initially for this many groups before calling getgrouplist */
 #define GETGROUPLIST_INIT_NGROUPS	15
@@ -156,7 +157,7 @@ char **prog_and_args;
 FILE *pidfile;
 FILE *logfile;
 char *cmdline;
-pid_t pid;
+pid_t pid; /* Process ID of child process */
 int daemonised;
 procrole_t proc_role = proc_main;
 int devnull;
@@ -1340,7 +1341,7 @@ void check_for_termination(void)
 
 /* ------------------------------------------------------------------- */
 
-/* check if the process is already runnig */
+/* check if the process is already running */
 int already_running(void)
 {
 	int ret = FALSE;
