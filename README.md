@@ -1,4 +1,4 @@
-# PCSK
+# PCSK - Process Creation's Swiss-army Knife
 
 PCSK is a program that
 
