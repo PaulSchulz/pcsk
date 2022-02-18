@@ -101,7 +101,7 @@ http://www.nix.hu/downloads/pcsk/
 
 https://github.com/PaulSchulz/pcsk
 
-This site is maintained by Paul Schulz. Any queries relating to the
+This repository is maintained by Paul Schulz. Any queries relating to the
 way that the project is hosted on GitHub should be directed here.
 
 # Author
